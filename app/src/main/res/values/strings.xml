@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">TB02</string>
+
+    <string name="btn_start">start</string>
+    <string name="btn_stop">stop</string>
 </resources>
