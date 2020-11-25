@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">TB02</string>
 
+    <string name="iv_desc">canvas tiles</string>
+
     <string name="btn_start">start</string>
-    <string name="btn_stop">stop</string>
+    <string name="btn_pause">pause</string>
+    <string name="btn_restart">restart</string>
+
+    <string name="start_score">0</string>
 </resources>
