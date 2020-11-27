@@ -40,7 +40,7 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
         this.sendMessage(msg)
     }
 
-    fun threadHasBlocked(piano: Piano) {
+    fun threadHasBlocked() {
         val msg = Message()
         msg.what = msgThreadBlocked
 
