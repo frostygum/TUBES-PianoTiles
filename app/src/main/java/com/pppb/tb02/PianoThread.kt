@@ -18,7 +18,7 @@ class PianoThread(
     override fun run() {
         try {
             while(isRunning) {
-                Thread.sleep(10)
+                Thread.sleep(15)
                 var emptyFound = 0
 
                 for((i, tile) in this.piano.tiles.withIndex()) {
@@ -62,7 +62,7 @@ class PianoThread(
         val tiles = this.piano.tiles
 
         for((i, tile) in tiles.withIndex()) {
-            val noteNum = (0..(0..8).random()).random()
+            val noteNum = (0..(0..5).random()).random()
             if(noteNum > 0) {
                 tiles[i].setNewNotes(List(noteNum){(Note(0))})
                 var pos = 0
@@ -109,16 +109,17 @@ class PianoThread(
             if(x > start && x < end) {
                 Log.d("DEBUG", "tile loc : $i")
                 for((j, note) in tile.notes.withIndex()) {
-                    if(!note.isHidden) {
-                        if(y > note.top && y < note.bottom) {
-                            Log.d("DEBUG", "Match!!")
+                    if(y > (note.top - 150) && y < note.bottom) {
+                        if(!note.isHidden) {
+                            Log.d("DEBUG", "Match !!")
                             this.clickAt(i, j)
                             this.handler.giveScore()
                             break
                         }
+                        else {
+                            Log.d("DEBUG", "Hidden !!")
+                        }
                     }
-                    Log.d("Match", "HIDDEN!!")
-                    break
                 }
             }
         }
