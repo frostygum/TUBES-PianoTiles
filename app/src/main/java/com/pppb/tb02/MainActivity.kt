@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
-        return if(isCanvasHasInitiated) {
+        return if(isCanvasHasInitiated && isThreadHasInitiated) {
             this.detector.onTouchEvent(event)
         } else {
             false
@@ -138,8 +138,8 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         this.resetCanvas()
     }
 
-    fun giveScore() {
-        this.score += 10
+    fun giveScore(point: Int) {
+        this.score += point
         this.binding.tvScore.text = this.score.toString()
     }
 

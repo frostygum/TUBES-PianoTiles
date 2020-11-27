@@ -26,8 +26,8 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
                 this.mainActivity.setThreadBlocked()
             }
             msgGiveScore -> {
-                Log.d("DEBUG", "Add Score")
-                this.mainActivity.giveScore()
+                val point: Int = msg.obj as Int
+                this.mainActivity.giveScore(point)
             }
         }
     }
@@ -47,9 +47,10 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
         this.sendMessage(msg)
     }
 
-    fun giveScore() {
+    fun giveScore(point: Int) {
         val msg = Message()
         msg.what = msgGiveScore
+        msg.obj = point
 
         this.sendMessage(msg)
     }
