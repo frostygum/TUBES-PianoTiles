@@ -13,7 +13,6 @@ import com.pppb.tb02.databinding.ActivityMainBinding
 import com.pppb.tb02.model.Piano
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var canvas: Canvas
@@ -73,32 +72,24 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         }
     }
 
-    private fun startThread(idx: Int = -1) {
+    private fun startThread() {
         this.btn_start.text = this.getText(R.string.btn_pause)
 
-        if(!isThreadHasInitiated) {
-            this.isThreadHasInitiated = true
-            this.tilesThread = PianoThread(
-                this.handler,
-                Pair(this.canvas.width, this.canvas.height),
-                4
-            )
-        }
+        this.isThreadHasInitiated = true
+        this.tilesThread = PianoThread(
+            this.handler,
+            Pair(this.canvas.width, this.canvas.height),
+            4
+        )
 
         if(isThreadHasBlocked) {
             this.isThreadHasBlocked = false
             this.tilesThread.setLastPos(savedPos)
-
-            if(idx > -1) {
-//                this.tilesThread.clickAt(idx)
-            }
         }
 
-        if(!isThreadHasRunning) {
-            this.isThreadHasRunning = true
-            //Start Piano Tiles Thread
-            this.tilesThread.start()
-        }
+        this.isThreadHasRunning = true
+        //Start Piano Tiles Thread
+        this.tilesThread.start()
     }
 
     fun drawTiles(piano: Piano) {
@@ -160,51 +151,15 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         this.binding.ivCanvas.invalidate()
     }
 
-    fun setThreadBlocked(piano: Piano) {
-        this.savedPos = piano
+    fun setThreadBlocked() {
         this.isThreadHasRunning = false
         this.isThreadHasBlocked = true
         this.isThreadHasInitiated = false
     }
 
-    fun setThreadStopped() {
-        this.isThreadHasRunning = false
-        this.isThreadHasInitiated = false
-        this.binding.btnStart.text = this.getText(R.string.btn_start)
-    }
-
-    private fun calculateClickPos(x: Float, y: Float) {
-//        if(this.isThreadHasRunning) {
-            //Each tiles width
-            val bin = this.binding.ivCanvas.width / this.savedPos.size
-
-            for((i, tile) in this.savedPos.tiles.withIndex()) {
-                val start = bin * i
-                val end = bin * (i + 1)
-
-                if(x > start && x < end) {
-                    Log.d("DEBUG", "tile loc : $i")
-                    for((j, note) in tile.notes.withIndex()) {
-                        if(!note.isHidden) {
-                            if(y > note.top && y < note.bottom) {
-                                Log.d("DEBUG", "Match!!")
-                                this.tilesThread.clickAt(i, j)
-                                this.giveScore()
-                                break
-                            }
-                        }
-                        Log.d("Match", "HIDDEN!!")
-                        break
-                    }
-                }
-            }
-//        }
-    }
-
     private inner class TilesGestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent?): Boolean {
             if (e != null) {
-                Log.d("DEBUG", "onDown ${e.x}, ${e.y}")
                 tilesThread.calculateClickPos(e.x, e.y)
             }
             return super.onDown(e)

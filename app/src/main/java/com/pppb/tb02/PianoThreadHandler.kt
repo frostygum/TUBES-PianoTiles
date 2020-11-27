@@ -7,9 +7,8 @@ import com.pppb.tb02.model.Piano
 
 class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
     private val msgTilesPosition = 0
-    private val msgThreadStopped = 1
-    private val msgThreadBlocked = 2
-    private val msgGiveScore = 3
+    private val msgThreadBlocked = 1
+    private val msgGiveScore = 2
 
     override fun handleMessage(msg: Message) {
         when(msg.what) {
@@ -23,13 +22,8 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
                     Log.d("DEBUG", tile.notes.toString())
                 }
             }
-            msgThreadStopped -> {
-                Log.d("DEBUG", "Stopped !!")
-                this.mainActivity.setThreadStopped()
-            }
             msgThreadBlocked -> {
-                val piano: Piano = msg.obj as Piano
-                this.mainActivity.setThreadBlocked(piano)
+                this.mainActivity.setThreadBlocked()
             }
             msgGiveScore -> {
                 Log.d("DEBUG", "Add Score")
@@ -49,14 +43,6 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
     fun threadHasBlocked(piano: Piano) {
         val msg = Message()
         msg.what = msgThreadBlocked
-        msg.obj = piano
-
-        this.sendMessage(msg)
-    }
-
-    fun threadHasStopped() {
-        val msg = Message()
-        msg.what = msgThreadStopped
 
         this.sendMessage(msg)
     }

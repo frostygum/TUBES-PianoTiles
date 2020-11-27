@@ -62,7 +62,7 @@ class PianoThread(
         val tiles = this.piano.tiles
 
         for((i, tile) in tiles.withIndex()) {
-            val noteNum = (0..(0..5).random()).random()
+            val noteNum = (0..5).random()
             if(noteNum > 0) {
                 tiles[i].setNewNotes(List(noteNum){(Note(0))})
                 var pos = 0
@@ -112,7 +112,7 @@ class PianoThread(
                     if(y > (note.top - 150) && y < note.bottom) {
                         if(!note.isHidden) {
                             Log.d("DEBUG", "Match !!")
-                            this.clickAt(i, j)
+                            this.piano.tiles[i].notes[j].hide()
                             this.handler.giveScore()
                             break
                         }
@@ -141,14 +141,6 @@ class PianoThread(
         this.isHasInitiated = true
     }
 
-    fun clickAt(tile: Int, note: Int) {
-       if(this.piano.tiles.size > tile) {
-           if(this.piano.tiles[tile].notes.size > note) {
-               this.piano.tiles[tile].notes[note].hide()
-           }
-       }
-    }
-
     fun start() {
         if(!isHasInitiated) {
             this.generateTiles()
@@ -163,11 +155,6 @@ class PianoThread(
 
     fun block() {
         this.handler.threadHasBlocked(this.piano)
-        this.isRunning = false
-    }
-
-    fun stop() {
-        this.handler.threadHasStopped()
         this.isRunning = false
     }
 }
