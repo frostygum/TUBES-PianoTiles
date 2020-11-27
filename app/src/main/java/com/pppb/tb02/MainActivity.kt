@@ -1,16 +1,18 @@
 package com.pppb.tb02
 
 import android.graphics.*
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.GestureDetector
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import com.pppb.tb02.databinding.ActivityMainBinding
+import com.pppb.tb02.model.Piano
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var binding: ActivityMainBinding
@@ -18,8 +20,9 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var handler: PianoThreadHandler
     private lateinit var tilesThread: PianoThread
     private lateinit var detector: GestureDetector
+    private lateinit var timer: StartTimer
     private var score: Int = 0
-    private var savedPos: MutableList<Int> = mutableListOf()
+    private var savedPos: Piano = Piano()
     private var isCanvasHasInitiated: Boolean = false
     private var isThreadHasInitiated: Boolean = false
     private var isThreadHasBlocked: Boolean = false
@@ -37,20 +40,20 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         this.detector = GestureDetector(this, TilesGestureListener())
         this.binding.ivCanvas.setOnTouchListener(this)
 
+        this.timer = StartTimer(3000, 1000)
+
         this.binding.btnStart.setOnClickListener {
             //Initiate Canvas if never initiated before
             if(!isCanvasHasInitiated) {
-                this.initiateCanvas()
                 this.isCanvasHasInitiated = true
+                this.initiateCanvas()
             }
 
             if(this.isThreadHasRunning) {
-                this.btn_start.text = this.getText(R.string.btn_start)
-                this.pause()
+                this.pauseThread()
             }
             else {
-                this.btn_start.text = this.getText(R.string.btn_pause)
-                this.start()
+                timer.start()
             }
         }
     }
@@ -63,16 +66,23 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         }
     }
 
-    private fun pause() {
+    private fun pauseThread() {
         if(isCanvasHasInitiated && isThreadHasRunning) {
+            this.btn_start.text = this.getText(R.string.btn_start)
             this.tilesThread.block()
         }
     }
 
-    private fun start(idx: Int = -1) {
+    private fun startThread(idx: Int = -1) {
+        this.btn_start.text = this.getText(R.string.btn_pause)
+
         if(!isThreadHasInitiated) {
             this.isThreadHasInitiated = true
-            this.tilesThread = PianoThread(this.handler, Pair(this.canvas.width, this.canvas.height), 4)
+            this.tilesThread = PianoThread(
+                this.handler,
+                Pair(this.canvas.width, this.canvas.height),
+                4
+            )
         }
 
         if(isThreadHasBlocked) {
@@ -80,7 +90,7 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
             this.tilesThread.setLastPos(savedPos)
 
             if(idx > -1) {
-                this.tilesThread.clickAt(idx)
+//                this.tilesThread.clickAt(idx)
             }
         }
 
@@ -91,21 +101,31 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         }
     }
 
-    fun drawTiles(arrPos: MutableList<Int>) {
-        this.savedPos = arrPos
+    fun drawTiles(piano: Piano) {
+        this.savedPos = piano
         //Initialize Paint color for tiles
-        val paint = Paint()
-        paint.color = ResourcesCompat.getColor(resources, R.color.tiles_bg, null)
+        val fillPaint = Paint()
+        fillPaint.style = Paint.Style.FILL
+        fillPaint.color = Color.BLACK
+
+        val strokePaint = Paint()
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.color = Color.RED
+        strokePaint.strokeWidth = 10F
 
         //Each tiles width
-        val bin = this.binding.ivCanvas.width /  this.savedPos.size
+        val bin = this.binding.ivCanvas.width / piano.size
 
-        //Desired Tiles Height
-        val tilesHeight = 500
-
-        for(i in 0 until  this.savedPos.size) {
-            val rect = Rect(bin * i,  this.savedPos[i], bin * (i + 1),  this.savedPos[i] + tilesHeight)
-            canvas.drawRect(rect, paint)
+        for((i, tile) in piano.tiles.withIndex()) {
+            if(tile.notes.isNotEmpty()) {
+                for(note in tile.notes) {
+                    if(!note.isHidden) {
+                        val rect = Rect(bin * i, note.top, bin * (i + 1), note.bottom)
+                        this.canvas.drawRect(rect, fillPaint)
+                        this.canvas.drawRect(rect, strokePaint)
+                    }
+                }
+            }
         }
     }
 
@@ -127,7 +147,7 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         this.resetCanvas()
     }
 
-    private fun giveScore() {
+    fun giveScore() {
         this.score += 10
         this.binding.tvScore.text = this.score.toString()
     }
@@ -140,7 +160,8 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
         this.binding.ivCanvas.invalidate()
     }
 
-    fun setThreadBlocked() {
+    fun setThreadBlocked(piano: Piano) {
+        this.savedPos = piano
         this.isThreadHasRunning = false
         this.isThreadHasBlocked = true
         this.isThreadHasInitiated = false
@@ -149,40 +170,62 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
     fun setThreadStopped() {
         this.isThreadHasRunning = false
         this.isThreadHasInitiated = false
+        this.binding.btnStart.text = this.getText(R.string.btn_start)
     }
 
     private fun calculateClickPos(x: Float, y: Float) {
-        if(this.isThreadHasRunning) {
+//        if(this.isThreadHasRunning) {
             //Each tiles width
-            val bin = this.binding.ivCanvas.width / savedPos.size
-            //Desired Tiles Height
-            val tilesHeight = 500
+            val bin = this.binding.ivCanvas.width / this.savedPos.size
 
-            for((i, pos) in this.savedPos.withIndex()) {
+            for((i, tile) in this.savedPos.tiles.withIndex()) {
                 val start = bin * i
                 val end = bin * (i + 1)
 
                 if(x > start && x < end) {
-                    Log.d("DEBUG", "loc : $i")
-                    if(y > pos && y < (pos + tilesHeight)) {
-                        Log.d("DEBUG", "Match!!")
-                        this.tilesThread.clickAt(i)
-                        this.giveScore()
+                    Log.d("DEBUG", "tile loc : $i")
+                    for((j, note) in tile.notes.withIndex()) {
+                        if(!note.isHidden) {
+                            if(y > note.top && y < note.bottom) {
+                                Log.d("DEBUG", "Match!!")
+                                this.tilesThread.clickAt(i, j)
+                                this.giveScore()
+                                break
+                            }
+                        }
+                        Log.d("Match", "HIDDEN!!")
                         break
                     }
-                    break
                 }
             }
-        }
+//        }
     }
 
     private inner class TilesGestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent?): Boolean {
             if (e != null) {
                 Log.d("DEBUG", "onDown ${e.x}, ${e.y}")
-                calculateClickPos(e.x, e.y)
+                tilesThread.calculateClickPos(e.x, e.y)
             }
             return super.onDown(e)
+        }
+    }
+
+    private inner class StartTimer(startTime: Long, interval: Long) : CountDownTimer(startTime, interval) {
+        override fun onFinish() {
+            startThread()
+        }
+
+        override fun onTick(millisUntilFinished: Long) {
+            if(millisUntilFinished in 2001..2999) {
+                binding.btnStart.text = "3"
+            }
+            else if(millisUntilFinished in 1001..1999) {
+                binding.btnStart.text = "2"
+            }
+            else {
+                binding.btnStart.text = "1"
+            }
         }
     }
 }

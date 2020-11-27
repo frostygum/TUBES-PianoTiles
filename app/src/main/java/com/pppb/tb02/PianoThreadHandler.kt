@@ -3,40 +3,53 @@ package com.pppb.tb02
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import com.pppb.tb02.model.Piano
 
 class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
     private val msgTilesPosition = 0
     private val msgThreadStopped = 1
     private val msgThreadBlocked = 2
+    private val msgGiveScore = 3
 
     override fun handleMessage(msg: Message) {
         when(msg.what) {
             msgTilesPosition -> {
-                val arrPos: MutableList<Int> = msg.obj as MutableList<Int>
+                val piano: Piano = msg.obj as Piano
 
                 this.mainActivity.resetCanvas()
-                this.mainActivity.drawTiles(arrPos)
+                this.mainActivity.drawTiles(piano)
+
+                for(tile in piano.tiles) {
+                    Log.d("DEBUG", tile.notes.toString())
+                }
             }
             msgThreadStopped -> {
+                Log.d("DEBUG", "Stopped !!")
                 this.mainActivity.setThreadStopped()
             }
             msgThreadBlocked -> {
-                this.mainActivity.setThreadBlocked()
+                val piano: Piano = msg.obj as Piano
+                this.mainActivity.setThreadBlocked(piano)
+            }
+            msgGiveScore -> {
+                Log.d("DEBUG", "Add Score")
+                this.mainActivity.giveScore()
             }
         }
     }
 
-    fun sendTilesLocation(arrPos: MutableList<Int>) {
+    fun sendTilesLocation(piano: Piano) {
         val msg = Message()
         msg.what = msgTilesPosition
-        msg.obj = arrPos
+        msg.obj = piano
 
         this.sendMessage(msg)
     }
 
-    fun threadHasBlocked() {
+    fun threadHasBlocked(piano: Piano) {
         val msg = Message()
         msg.what = msgThreadBlocked
+        msg.obj = piano
 
         this.sendMessage(msg)
     }
@@ -44,6 +57,13 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
     fun threadHasStopped() {
         val msg = Message()
         msg.what = msgThreadStopped
+
+        this.sendMessage(msg)
+    }
+
+    fun giveScore() {
+        val msg = Message()
+        msg.what = msgGiveScore
 
         this.sendMessage(msg)
     }
