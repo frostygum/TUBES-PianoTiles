@@ -1,4 +1,4 @@
-package com.pppb.tb02
+package com.pppb.tb02.view
 
 import android.os.Handler
 import android.os.Message
@@ -14,20 +14,14 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
         when(msg.what) {
             msgTilesPosition -> {
                 val piano: Piano = msg.obj as Piano
+                this.mainActivity.updatePiano(piano)
 
-                this.mainActivity.resetCanvas()
-                this.mainActivity.drawTiles(piano)
-
-                for(tile in piano.tiles) {
-                    Log.d("DEBUG", tile.notes.toString())
+                for(i in piano.notes) {
+                    Log.d("debug", i.toString())
                 }
             }
             msgThreadBlocked -> {
                 this.mainActivity.setThreadBlocked()
-            }
-            msgGiveScore -> {
-                val point: Int = msg.obj as Int
-                this.mainActivity.giveScore(point)
             }
         }
     }
@@ -43,14 +37,6 @@ class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
     fun threadHasBlocked() {
         val msg = Message()
         msg.what = msgThreadBlocked
-
-        this.sendMessage(msg)
-    }
-
-    fun giveScore(point: Int) {
-        val msg = Message()
-        msg.what = msgGiveScore
-        msg.obj = point
 
         this.sendMessage(msg)
     }

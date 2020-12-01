@@ -1,9 +1,10 @@
 package com.pppb.tb02.model
 
-class Note(var top: Int) {
-    var isHidden = true
-    val length: Int = 500
+class Note(var top: Int, var tilePos: Int) {
+    val length: Int = 700
     var bottom: Int = top + length
+    var isHidden = false
+    var isClicked = false
 
     fun set(top: Int) {
         this.top = top
@@ -14,11 +15,11 @@ class Note(var top: Int) {
         this.isHidden = true
     }
 
-    fun unHide() {
-        this.isHidden = false
+    fun clicked() {
+        this.isClicked = true
     }
 
     override fun toString(): String {
-        return "[TOP: $top, BOTTOM: $bottom, IS_HIDDEN?: $isHidden]"
+        return "[TOP: $top, BOTTOM: $bottom, IS_HIDDEN?: $isHidden, tile: $tilePos]"
     }
 }

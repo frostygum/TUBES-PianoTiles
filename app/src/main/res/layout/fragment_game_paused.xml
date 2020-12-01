@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_pause"
+        android:textColor="@color/canvas_bg"
+        android:textSize="70sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/tv_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timer"
+        android:textColor="@color/canvas_bg"
+        android:textSize="150sp"
+        android:textStyle="bold"
+        android:layout_marginVertical="100dp"
+        />
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_start"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/canvas_bg"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"
+        android:paddingVertical="20dp"
+        android:paddingHorizontal="50dp"
+        />
+</LinearLayout>

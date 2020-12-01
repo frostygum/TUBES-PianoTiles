@@ -1,15 +1,15 @@
 package com.pppb.tb02.model
 
-class Piano(val size: Int = 4) {
-    var tiles: List<Tile> = listOf()
+class Piano() {
+    var notes: List<Note> = listOf()
 
-    init {
-        this.initialize()
-    }
-
-    private fun initialize() {
-        for(i in 1..this.size) {
-            this.tiles += Tile()
+    fun add(top: Int, tilePos: Int) {
+        if(notes.isEmpty()) {
+            this.notes += Note(top, tilePos)
+        }
+        else {
+            val pos = this.notes[this.notes.size - 1].top - 700
+            this.notes += Note(pos, tilePos)
         }
     }
 }
