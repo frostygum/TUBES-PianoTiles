@@ -55,6 +55,14 @@ class FragmentGameLose: Fragment(R.layout.fragment_game_paused) {
         this.binding.tvLevel.text = this.level.toString()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(!hidden) {
+            this.binding.tvScore.text = this.score.toString()
+            this.binding.tvLevel.text = this.level.toString()
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 

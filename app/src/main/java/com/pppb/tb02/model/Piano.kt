@@ -8,7 +8,7 @@ class Piano() {
             this.notes += Note(top, tilePos)
         }
         else {
-            val pos = this.notes[this.notes.size - 1].top - 700
+            val pos = this.notes[this.notes.size - 1].top - 500
             this.notes += Note(pos, tilePos)
         }
     }

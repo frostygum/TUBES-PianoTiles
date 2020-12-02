@@ -49,12 +49,13 @@ class MainPresenter(private val ui: IMainActivity): IMainPresenter {
     }
 
     private fun setScore(score: Int) {
+        this.score = score
         this.ui.updateUIScore(score)
     }
 
     override fun setLevel(level: Int) {
         this.level = level
-        this.ui.setGameLevel(level)
+        this.ui.setGameLevel(this.level)
     }
 
     override fun setThreadBlocked() {

@@ -1,7 +1,7 @@
 package com.pppb.tb02.model
 
 class Note(var top: Int, var tilePos: Int) {
-    val length: Int = 700
+    val length: Int = 500
     var bottom: Int = top + length
     var isHidden = false
     var isClicked = false
