@@ -5,10 +5,15 @@ class Note(var top: Int, var tilePos: Int) {
     var bottom: Int = top + length
     var isHidden = false
     var isClicked = false
+    var isLoser = false
 
     fun set(top: Int) {
         this.top = top
         this.bottom = top + length
+    }
+
+    fun lose() {
+        this.isLoser = true
     }
 
     fun hide() {

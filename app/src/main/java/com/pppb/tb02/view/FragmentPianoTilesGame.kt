@@ -1,19 +1,15 @@
 package com.pppb.tb02.view
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.pppb.tb02.R
 import com.pppb.tb02.databinding.FragmentPianoTilesGameBinding
-import com.pppb.tb02.model.Note
 import com.pppb.tb02.model.Piano
-import com.pppb.tb02.presenter.MainPresenter
+import com.pppb.tb02.presenter.IMainPresenter
 import java.lang.ClassCastException
 
 class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View.OnTouchListener {
@@ -23,10 +19,10 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
     private lateinit var canvas: Canvas
     private lateinit var detector: GestureDetector
     private lateinit var handler: PianoThreadHandler
-    private lateinit var presenter: MainPresenter
+    private lateinit var presenter: IMainPresenter
 
     companion object {
-        fun newInstance(presenter: MainPresenter, handler: PianoThreadHandler): FragmentPianoTilesGame {
+        fun newInstance(presenter: IMainPresenter, handler: PianoThreadHandler): FragmentPianoTilesGame {
             val fragment = FragmentPianoTilesGame()
             fragment.presenter = presenter
             fragment.handler = handler
@@ -46,7 +42,7 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         this.binding.ivCanvas.setOnTouchListener(this)
 
         this.binding.btnPause.setOnClickListener {
-            if(this.presenter.isThreadHasRunning) {
+            if(this.presenter.isThreadHasRunning()) {
                 this.tilesThread.block()
                 this.listener.changePage("PAUSE")
             }
@@ -59,34 +55,29 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         this.binding.tvScore.text = score.toString()
     }
 
+    fun updateGameLevel(level: Int) {
+        this.binding.tvLevel.text = level.toString()
+    }
+
     private fun startThread(piano: Piano) {
-        this.presenter.isThreadHasInitiated = true
         this.tilesThread = PianoThread(
             this.handler,
             Pair(this.canvas.width, this.canvas.height),
-            4
+            1
         )
 
-        if(this.presenter.isThreadHasBlocked) {
-            this.presenter.isThreadHasBlocked = false
+        if(this.presenter.isThreadHasBlocked()) {
+            this.presenter.threadIsBlocked(true)
             this.tilesThread.setLastPos(this.presenter.getPiano())
+            this.tilesThread.setLastLevel(this.presenter.getLevel())
         }
         else {
             this.tilesThread.setLastPos(piano)
         }
 
-        this.presenter.isThreadHasRunning = true
+        this.presenter.threadIsRunning(true)
         //Start Piano Tiles Thread
         this.tilesThread.start()
-    }
-
-    private fun createPiano(): Piano {
-        val piano = Piano()
-        for(i in 0..20) {
-            val tilePos = (-1..3).random()
-            piano.add(500, tilePos)
-        }
-        return piano
     }
 
     fun drawTiles(piano: Piano) {
@@ -95,13 +86,9 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         val fillPaint = Paint()
         fillPaint.style = Paint.Style.FILL
 
-        val startFillPaint = Paint()
-        startFillPaint.style = Paint.Style.FILL
-
-        val strokePaint = Paint()
-        strokePaint.style = Paint.Style.STROKE
-        strokePaint.color = Color.RED
-        strokePaint.strokeWidth = 10F
+        val textPaint = Paint()
+        textPaint.color = Color.WHITE
+        textPaint.textSize = 100F;
 
         //Each tiles width
         val bin = this.binding.ivCanvas.width / 4
@@ -109,19 +96,45 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         for((i, note) in piano.notes.withIndex()) {
             if(!note.isHidden) {
                 fillPaint.color = Color.BLACK
-                if(i == 0 && !this.presenter.isThreadHasRunning) {
+                val top = note.top
+                val bottom = note.bottom
+                val left = bin * note.tilePos
+                val right = bin * (note.tilePos + 1)
+
+                if(i == 0 && !this.presenter.isThreadHasRunning()) {
                     fillPaint.color = Color.CYAN
+                }
+                if(note.isLoser) {
+                    fillPaint.color = Color.RED
                 }
                 if(note.isClicked) {
                     fillPaint.color = Color.GRAY
                 }
 
                 if(note.tilePos >= 0) {
-                    val rect = Rect(bin * note.tilePos, note.top, bin * (note.tilePos + 1), note.bottom)
+                    val rect = Rect(left, top, right, bottom)
                     this.canvas.drawRect(rect, fillPaint)
-                    this.canvas.drawRect(rect, strokePaint)
+                }
+
+                if(i == 0 && !this.presenter.isThreadHasRunning() && !note.isLoser) {
+                    val y = top + (kotlin.math.abs(top - bottom) / 2) + (textPaint.textSize / 2)
+                    val x = left + (kotlin.math.abs(left - right) / 2) - textPaint.textSize
+                    this.canvas.drawText("Start", x, y, textPaint)
                 }
             }
+        }
+    }
+
+    private fun drawBackground() {
+        this.canvas.drawColor(ResourcesCompat.getColor(resources, R.color.canvas_bg, null))
+        val fillPaint = Paint()
+        fillPaint.color = Color.BLACK
+        val bin = this.binding.ivCanvas.width / 4
+
+        for(i in 0..2) {
+            val right = bin * (i + 1)
+
+            this.canvas.drawLine(right.toFloat(), 0F, right.toFloat(), this.binding.ivCanvas.height.toFloat(), fillPaint)
         }
     }
 
@@ -129,7 +142,6 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         //Get imageView width and height
         val width = this.binding.ivCanvas.width
         val height = this.binding.ivCanvas.height
-        Log.d("SIZE", "$width, $height")
 
         //Create Bitmap
         val mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -146,7 +158,7 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
 
     private fun resetCanvas() {
         //Draw canvas background
-        this.canvas.drawColor(ResourcesCompat.getColor(resources, R.color.canvas_bg, null))
+        this.drawBackground()
         //Force re-draw
         this.binding.ivCanvas.invalidate()
     }
@@ -164,7 +176,7 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
                 //if in note-i y range
                 if(y > (note.top - 150) && y < note.bottom) {
                     //if note hasn't hidden
-                    if(!this.presenter.isThreadHasInitiated && !this.presenter.isThreadHasRunning) {
+                    if(!this.presenter.isThreadHasRunning()) {
                         if(i == 0) {
                             this.startThread(this.presenter.getPiano())
                             note.clicked()
@@ -175,7 +187,6 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
                         if(!note.isHidden && !note.isClicked) {
                             //hide node & add score to ui activity
                             note.clicked()
-                            Log.d("click", "match")
                             this.presenter.addScore(10)
                             break
                         }
@@ -187,15 +198,19 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
 
     fun initialization() {
         this.initiateCanvas()
-        val piano = this.createPiano()
-        this.drawTiles(piano)
-        this.presenter.setPiano(piano)
+        this.presenter.resetGame()
+        this.drawTiles(this.presenter.getPiano())
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if(!hidden) {
-            this.startThread(this.presenter.getPiano())
+            if(this.presenter.isThreadHasBlocked()) {
+                this.startThread(this.presenter.getPiano())
+            }
+            else {
+                this.drawTiles(this.presenter.getPiano())
+            }
         }
     }
 

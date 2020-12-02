@@ -1,7 +1,7 @@
 package com.pppb.tb02.view
 
 import android.os.Bundle
-import android.util.Log
+import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     private lateinit var binding: ActivityMainBinding
     private lateinit var handler: PianoThreadHandler
     private lateinit var presenter: MainPresenter
+    private lateinit var timer: StartTimer
 
     private lateinit var fragments: List<Fragment>
     private lateinit var pianoFragment: FragmentPianoTilesGame
@@ -25,33 +26,40 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Handler Initialization
-        this.handler = PianoThreadHandler(this)
+        //Timer Initialization
+        this.timer = StartTimer(1000, 500)
 
+        //Presenter Initialization
         this.presenter = MainPresenter(this)
+
+        //Handler Initialization
+        this.handler = PianoThreadHandler(this.presenter)
+
         this.pianoFragment = FragmentPianoTilesGame.newInstance(this.presenter, this.handler)
         this.pauseFragment = FragmentGamePause.newInstance(this.presenter)
         this.loseFragment = FragmentGameLose.newInstance(this.presenter)
         this.fragments = listOf(this.pianoFragment, this.pauseFragment, this.loseFragment)
 
+        //Default start page
         this.changePage("GAME")
-    }
-
-    fun giveScore(point: Int) {
-        this.presenter.addScore(point)
     }
 
     override fun updateUIScore(score: Int) {
         this.pianoFragment.updateUIScore(score)
     }
 
-    fun updatePiano(piano: Piano) {
-        this.presenter.setPiano(piano)
+    override fun updatePiano(piano: Piano) {
         this.pianoFragment.drawTiles(piano)
     }
 
-    fun setThreadBlocked() {
-        this.presenter.setThreadBlocked()
+    override fun setGameLost() {
+        this.loseFragment.setFinalLevel(this.presenter.getLevel())
+        this.loseFragment.setFinalScore(this.presenter.getScore())
+        this.timer.start()
+    }
+
+    override fun setGameLevel(level: Int) {
+        this.pianoFragment.updateGameLevel(level)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -102,5 +110,14 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         }
 
         ft.commit()
+    }
+
+    private inner class StartTimer(startTime: Long, interval: Long) : CountDownTimer(startTime, interval) {
+        override fun onFinish() {
+            changePage("LOSE")
+        }
+
+        override fun onTick(millisUntilFinished: Long) {
+        }
     }
 }

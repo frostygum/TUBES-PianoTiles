@@ -1,16 +1,14 @@
 package com.pppb.tb02.view
 
-import android.graphics.Color
-import android.graphics.Rect
-import android.util.Log
-import com.pppb.tb02.model.Note
+
 import com.pppb.tb02.model.Piano
-import kotlin.math.abs
+import com.pppb.tb02.util.PianoGenerator
+import kotlin.random.Random
 
 class PianoThread(
     private val handler: PianoThreadHandler,
     private val canvasSize: Pair<Int, Int>,
-    private val level: Int = 1
+    private var level: Int = 1
 ): Runnable {
     private var thread: Thread = Thread(this)
     private var isRunning: Boolean = false
@@ -19,16 +17,18 @@ class PianoThread(
 
     override fun run() {
         try {
-            while(isRunning) {
+            while(this.isRunning) {
                 Thread.sleep(10)
                 var hiddenFound = 0
 
-                for(note in piano.notes) {
-//                    if(note.top > 0) {
-//                        note.unHide()
-//                    }
+                for(note in this.piano.notes) {
                     if(!note.isHidden) {
-                        if(note.top > canvasSize.second) {
+                        if(!note.isClicked && note.bottom > this.canvasSize.second) {
+                            note.lose()
+                            this.lost()
+                        }
+
+                        if(note.top > this.canvasSize.second) {
                             note.hide()
                         }
 
@@ -46,12 +46,12 @@ class PianoThread(
                     }
                 }
 
-                if(hiddenFound == piano.notes.size) {
-//                    this.isRunning = false
+                if(hiddenFound == this.piano.notes.size) {
                     this.generateTiles()
                 }
 
                 this.handler.sendTilesLocation(this.piano)
+                this.handler.sendGameLevel(this.level)
             }
         } catch (e: InterruptedException) {
             e.printStackTrace()
@@ -61,16 +61,12 @@ class PianoThread(
     private fun calculateTilesMovement(rectStartPos: Int, movementLength: Int): Int {
         //multiplier: multiplier for speed/ note movement
         val multiplier = 2
-        return rectStartPos + (movementLength * multiplier)
+        return rectStartPos + (movementLength * multiplier) + this.level
     }
 
     private fun generateTiles() {
-        val piano = Piano()
-        for(i in 0..20) {
-            val tilePos = (-1..3).random()
-            piano.add(-500, tilePos)
-        }
-        this.piano = piano
+        this.level++
+        this.piano = PianoGenerator.createPiano(25 + (this.level * 2), -500, Random.nextBoolean())
     }
 
     fun setLastPos(piano: Piano) {
@@ -78,9 +74,12 @@ class PianoThread(
         this.isHasInitiated = true
     }
 
+    fun setLastLevel(level: Int) {
+        this.level = level
+    }
+
     fun start() {
         if(!isHasInitiated) {
-//            this.generateTiles()
             this.isHasInitiated = true
         }
 
@@ -92,6 +91,11 @@ class PianoThread(
 
     fun block() {
         this.handler.threadHasBlocked()
+        this.isRunning = false
+    }
+
+    private fun lost() {
+        this.handler.gameLost()
         this.isRunning = false
     }
 }

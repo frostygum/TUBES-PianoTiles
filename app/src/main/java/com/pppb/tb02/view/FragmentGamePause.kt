@@ -57,7 +57,7 @@ class FragmentGamePause: Fragment(R.layout.fragment_game_paused) {
 
     private inner class StartTimer(startTime: Long, interval: Long) : CountDownTimer(startTime, interval) {
         override fun onFinish() {
-            if(!presenter.isThreadHasInitiated && !presenter.isThreadHasRunning) {
+            if(!presenter.isThreadHasRunning()) {
                 listener.changePage("GAME")
                 binding.tvTimer.text = ""
             }

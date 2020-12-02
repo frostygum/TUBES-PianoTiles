@@ -8,7 +8,14 @@
     <string name="btn_restart">restart</string>
 
     <string name="start_score">0</string>
+    <string name="start_level">1</string>
     <string name="tv_pause">pause</string>
+    <string name="tv_score">0</string>
+    <string name="tv_score_string">score :</string>
+    <string name="tv_score_value">0</string>
+    <string name="tv_level_string">level :</string>
+    <string name="tv_level_value">0</string>
     <string name="tv_start">start</string>
+    <string name="tv_level">level</string>
     <string name="timer"> </string>
 </resources>

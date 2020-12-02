@@ -2,28 +2,47 @@ package com.pppb.tb02.view
 
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import com.pppb.tb02.model.Piano
+import com.pppb.tb02.presenter.IMainPresenter
 
-class PianoThreadHandler(private val mainActivity: MainActivity): Handler() {
+class PianoThreadHandler(private val presenter: IMainPresenter): Handler() {
     private val msgTilesPosition = 0
     private val msgThreadBlocked = 1
-    private val msgGiveScore = 2
+    private val msgGameLevel = 2
+    private val msgGameLost = 3
 
     override fun handleMessage(msg: Message) {
         when(msg.what) {
             msgTilesPosition -> {
                 val piano: Piano = msg.obj as Piano
-                this.mainActivity.updatePiano(piano)
-
-                for(i in piano.notes) {
-                    Log.d("debug", i.toString())
-                }
+                this.presenter.setPiano(piano)
             }
             msgThreadBlocked -> {
-                this.mainActivity.setThreadBlocked()
+                this.presenter.setThreadBlocked()
+            }
+            msgGameLevel -> {
+                val level: Int = msg.obj as Int
+                this.presenter.setLevel(level)
+            }
+            msgGameLost -> {
+                this.presenter.setGameLost()
             }
         }
+    }
+
+    fun sendGameLevel(level: Int) {
+        val msg = Message()
+        msg.what = msgGameLevel
+        msg.obj = level
+
+        this.sendMessage(msg)
+    }
+
+    fun gameLost() {
+        val msg = Message()
+        msg.what = msgGameLost
+
+        this.sendMessage(msg)
     }
 
     fun sendTilesLocation(piano: Piano) {
