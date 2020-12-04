@@ -70,16 +70,33 @@
             android:layout_marginStart="10dp"
             />
     </LinearLayout>
-    <Button
-        android:id="@+id/btn_start"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/btn_restart"
-        android:backgroundTint="@color/bg_white"
-        android:textColor="@color/bg_red"
-        android:textSize="20sp"
+        android:orientation="vertical"
         android:layout_marginTop="350dp"
-        android:paddingVertical="20dp"
-        android:paddingHorizontal="50dp"
-        />
+        >
+        <Button
+            android:id="@+id/btn_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_score"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/bg_white"
+            android:textSize="20sp"
+            android:paddingVertical="20dp"
+            android:paddingHorizontal="50dp"
+            />
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_restart"
+            android:backgroundTint="@color/bg_white"
+            android:textColor="@color/bg_red"
+            android:textSize="20sp"
+            android:paddingVertical="20dp"
+            android:paddingHorizontal="50dp"
+            />
+    </LinearLayout>
 </LinearLayout>

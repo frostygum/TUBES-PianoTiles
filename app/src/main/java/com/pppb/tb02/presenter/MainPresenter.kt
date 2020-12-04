@@ -1,18 +1,29 @@
 package com.pppb.tb02.presenter
 
+import android.app.Application
+import android.util.Log
+import com.pppb.tb02.model.Menu
 import com.pppb.tb02.model.Piano
+import com.pppb.tb02.storage.ViewStorage
 import com.pppb.tb02.util.PianoGenerator
 import com.pppb.tb02.view.IMainActivity
 import kotlin.random.Random
 
-class MainPresenter(private val ui: IMainActivity): IMainPresenter {
+class MainPresenter(private val ui: IMainActivity, private val application: Application): IMainPresenter {
     private var score: Int = 0
     private var piano: Piano = Piano()
     private var level: Int = 1
+    private var scoreList: MutableList<Menu> = mutableListOf()
     //Thread States
     private var isThreadHasInitiated: Boolean = false
     private var isThreadHasBlocked: Boolean = false
     private var isThreadHasRunning: Boolean = false
+    //Storage
+    private val storage: ViewStorage = ViewStorage(this.application)
+
+    init {
+        this.scoreList.addAll(this.storage.getFoodList())
+    }
 
     override fun getPiano() = this.piano
 
@@ -38,6 +49,7 @@ class MainPresenter(private val ui: IMainActivity): IMainPresenter {
     }
 
     override fun resetGame() {
+        //Reset game, set default value of level to 1 and score to 0
         this.setLevel(1)
         this.setScore(0)
         this.piano = PianoGenerator.createPiano(20, 500, Random.nextBoolean())
@@ -68,6 +80,12 @@ class MainPresenter(private val ui: IMainActivity): IMainPresenter {
         this.isThreadHasRunning = false
         this.isThreadHasBlocked = false
         this.isThreadHasInitiated = false
-        this.ui.setGameLost()
+        this.scoreList.add(Menu(this.level, this.score))
+        //Sort the score list by its score
+        this.scoreList.sortByDescending { it.score }
+        //Save Score List to storage
+        this.storage.saveScoreList(this.scoreList)
+        //Update Score List UI
+        this.ui.setGameLost(this.scoreList)
     }
 }

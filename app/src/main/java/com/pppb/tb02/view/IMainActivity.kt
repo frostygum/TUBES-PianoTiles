@@ -1,5 +1,6 @@
 package com.pppb.tb02.view
 
+import com.pppb.tb02.model.Menu
 import com.pppb.tb02.model.Piano
 
 interface IMainActivity {
@@ -7,5 +8,5 @@ interface IMainActivity {
     fun changePage(page: String)
     fun updatePiano(piano: Piano)
     fun setGameLevel(level: Int)
-    fun setGameLost()
+    fun setGameLost(scoreList: MutableList<Menu>)
 }

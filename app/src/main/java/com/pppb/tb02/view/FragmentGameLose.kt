@@ -8,18 +8,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.pppb.tb02.R
 import com.pppb.tb02.databinding.FragmentGameLoseBinding
+import com.pppb.tb02.presenter.IMainPresenter
 import com.pppb.tb02.presenter.MainPresenter
 import java.lang.ClassCastException
 
 class FragmentGameLose: Fragment(R.layout.fragment_game_paused) {
     private lateinit var binding: FragmentGameLoseBinding
     private lateinit var listener: IMainActivity
-    private lateinit var presenter: MainPresenter
+    private lateinit var presenter: IMainPresenter
     private var score: Int = 0
     private var level: Int = 0
 
     companion object {
-        fun newInstance(presenter: MainPresenter): FragmentGameLose {
+        fun newInstance(presenter: IMainPresenter): FragmentGameLose {
             val fragment = FragmentGameLose()
             fragment.presenter = presenter
             return fragment
@@ -36,6 +37,10 @@ class FragmentGameLose: Fragment(R.layout.fragment_game_paused) {
         this.binding.btnStart.setOnClickListener {
             this.presenter.resetGame()
             this.listener.changePage("GAME")
+        }
+
+        this.binding.btnScore.setOnClickListener {
+            this.listener.changePage("SCORE")
         }
 
         return this.binding.root

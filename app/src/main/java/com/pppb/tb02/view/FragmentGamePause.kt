@@ -9,18 +9,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.pppb.tb02.R
 import com.pppb.tb02.databinding.FragmentGamePausedBinding
+import com.pppb.tb02.presenter.IMainPresenter
 import com.pppb.tb02.presenter.MainPresenter
 import java.lang.ClassCastException
 
 class FragmentGamePause: Fragment(R.layout.fragment_game_paused) {
     private lateinit var binding: FragmentGamePausedBinding
     private lateinit var listener: IMainActivity
-    private lateinit var presenter: MainPresenter
+    private lateinit var presenter: IMainPresenter
 
     private lateinit var timer: StartTimer
 
     companion object {
-        fun newInstance(presenter: MainPresenter): FragmentGamePause {
+        fun newInstance(presenter: IMainPresenter): FragmentGamePause {
             val fragment = FragmentGamePause()
             fragment.presenter = presenter
             return fragment
