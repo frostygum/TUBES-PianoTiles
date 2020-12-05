@@ -1,8 +1,7 @@
 package com.pppb.tb02.presenter
 
 import android.app.Application
-import android.util.Log
-import com.pppb.tb02.model.Menu
+import com.pppb.tb02.model.HighScore
 import com.pppb.tb02.model.Piano
 import com.pppb.tb02.storage.ViewStorage
 import com.pppb.tb02.util.PianoGenerator
@@ -13,7 +12,7 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
     private var score: Int = 0
     private var piano: Piano = Piano()
     private var level: String = "1"
-    private var scoreList: MutableList<Menu> = mutableListOf()
+    private var scoreList: MutableList<HighScore> = mutableListOf()
     //Game States
     private var isThreadHasInitiated: Boolean = false
     private var isThreadHasBlocked: Boolean = false
@@ -87,7 +86,7 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
         this.isThreadHasRunning = false
         this.isThreadHasBlocked = false
         this.isThreadHasInitiated = false
-        this.scoreList.add(Menu(this.level, this.score))
+        this.scoreList.add(HighScore(this.level, this.score))
         //Sort the score list by its score
         this.scoreList.sortByDescending { it.score }
         //Save Score List to storage

@@ -5,12 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.pppb.tb02.R
-import com.pppb.tb02.databinding.FragmentGameLoseBinding
 import com.pppb.tb02.databinding.FragmentScoreBinding
-import com.pppb.tb02.model.Menu
 import com.pppb.tb02.presenter.IMainPresenter
 import java.lang.ClassCastException
 

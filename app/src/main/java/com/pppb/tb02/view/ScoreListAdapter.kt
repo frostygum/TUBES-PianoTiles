@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.pppb.tb02.databinding.ScoreItemBinding
-import com.pppb.tb02.model.Menu
+import com.pppb.tb02.model.HighScore
 
 class ScoreListAdapter(private val view: Context) : BaseAdapter() {
-    private var scoreList: MutableList<Menu> = mutableListOf()
+    private var scoreList: MutableList<HighScore> = mutableListOf()
 
-    override fun getItem(position: Int): Menu {
+    override fun getItem(position: Int): HighScore {
         return scoreList[position]
     }
 
@@ -23,7 +23,7 @@ class ScoreListAdapter(private val view: Context) : BaseAdapter() {
         return 0
     }
 
-    fun update(scoreList: MutableList<Menu>) {
+    fun update(scoreList: MutableList<HighScore>) {
         this.scoreList = scoreList
         this.notifyDataSetChanged()
     }
@@ -48,7 +48,7 @@ class ScoreListAdapter(private val view: Context) : BaseAdapter() {
     private class ViewHolder(view: View) {
         private val binding: ScoreItemBinding = ScoreItemBinding.bind(view)
 
-        fun updateView(score: Menu) {
+        fun updateView(score: HighScore) {
             this.binding.tvLevelValue.text = score.level.toString()
             this.binding.tvScoreValue.text = score.score.toString()
         }

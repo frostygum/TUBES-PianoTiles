@@ -6,16 +6,14 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.*
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.pppb.tb02.databinding.ActivityMainBinding
-import com.pppb.tb02.model.Menu
+import com.pppb.tb02.model.HighScore
 import com.pppb.tb02.model.Piano
 import com.pppb.tb02.presenter.MainPresenter
-import java.lang.Math.abs
 
 
 class MainActivity : AppCompatActivity(), IMainActivity, SensorEventListener {
@@ -80,7 +78,7 @@ class MainActivity : AppCompatActivity(), IMainActivity, SensorEventListener {
         this.pianoFragment.drawTiles(piano)
     }
 
-    override fun setGameLost(scoreList: MutableList<Menu>) {
+    override fun setGameLost(scoreList: MutableList<HighScore>) {
         this.loseFragment.setFinalLevel(this.presenter.getLevel())
         this.loseFragment.setFinalScore(this.presenter.getScore())
         this.adapter.update(scoreList)
