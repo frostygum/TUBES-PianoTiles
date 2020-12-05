@@ -12,18 +12,21 @@ import kotlin.random.Random
 class MainPresenter(private val ui: IMainActivity, private val application: Application): IMainPresenter {
     private var score: Int = 0
     private var piano: Piano = Piano()
-    private var level: Int = 1
+    private var level: String = "1"
     private var scoreList: MutableList<Menu> = mutableListOf()
-    //Thread States
+    //Game States
     private var isThreadHasInitiated: Boolean = false
     private var isThreadHasBlocked: Boolean = false
     private var isThreadHasRunning: Boolean = false
+    private var isBonusLevel: Boolean = false
     //Storage
     private val storage: ViewStorage = ViewStorage(this.application)
 
     init {
         this.scoreList.addAll(this.storage.getFoodList())
     }
+
+    override fun isBonusLevel() = this.isBonusLevel
 
     override fun getPiano() = this.piano
 
@@ -39,6 +42,11 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
         this.isThreadHasRunning = state
     }
 
+    override fun toggleBonusLevel() {
+        this.isBonusLevel = !this.isBonusLevel
+        this.ui.updateBonusLevelState(this.isBonusLevel)
+    }
+
     override fun threadIsBlocked(state: Boolean) {
         this.isThreadHasBlocked = state
     }
@@ -50,7 +58,7 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
 
     override fun resetGame() {
         //Reset game, set default value of level to 1 and score to 0
-        this.setLevel(1)
+        this.setLevel("1")
         this.setScore(0)
         this.piano = PianoGenerator.createPiano(20, 500, Random.nextBoolean())
     }
@@ -65,7 +73,7 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
         this.ui.updateUIScore(score)
     }
 
-    override fun setLevel(level: Int) {
+    override fun setLevel(level: String) {
         this.level = level
         this.ui.setGameLevel(this.level)
     }

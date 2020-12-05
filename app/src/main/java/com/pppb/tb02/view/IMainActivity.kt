@@ -7,6 +7,7 @@ interface IMainActivity {
     fun updateUIScore(score: Int)
     fun changePage(page: String)
     fun updatePiano(piano: Piano)
-    fun setGameLevel(level: Int)
+    fun setGameLevel(level: String)
     fun setGameLost(scoreList: MutableList<Menu>)
+    fun updateBonusLevelState(state: Boolean)
 }

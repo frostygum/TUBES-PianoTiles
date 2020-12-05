@@ -5,10 +5,10 @@ import com.pppb.tb02.model.Piano
 interface IMainPresenter {
     fun setPiano(piano: Piano)
     fun setThreadBlocked()
-    fun setLevel(level: Int)
+    fun setLevel(level: String)
     fun setGameLost()
     fun getPiano(): Piano
-    fun getLevel(): Int
+    fun getLevel(): String
     fun getScore(): Int
     fun addScore(score: Int)
     fun resetGame()
@@ -16,4 +16,6 @@ interface IMainPresenter {
     fun isThreadHasBlocked(): Boolean
     fun threadIsBlocked(state: Boolean)
     fun threadIsRunning(state: Boolean)
+    fun toggleBonusLevel()
+    fun isBonusLevel(): Boolean
 }

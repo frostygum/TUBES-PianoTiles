@@ -20,6 +20,7 @@
     <string name="tv_start">start</string>
     <string name="tv_level">level</string>
     <string name="timer"> </string>
+    <string name="bonus_level">BONUS</string>
 
     <string name="openDrawer">open</string>
     <string name="closeDrawer">close</string>

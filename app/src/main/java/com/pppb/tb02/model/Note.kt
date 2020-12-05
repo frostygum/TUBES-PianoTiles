@@ -6,6 +6,7 @@ class Note(var top: Int, var tilePos: Int) {
     var isHidden = false
     var isClicked = false
     var isLoser = false
+    var isBonus = false
 
     fun set(top: Int) {
         this.top = top
@@ -22,6 +23,10 @@ class Note(var top: Int, var tilePos: Int) {
 
     fun clicked() {
         this.isClicked = true
+    }
+
+    fun setBonus() {
+        this.isBonus = true
     }
 
     override fun toString(): String {

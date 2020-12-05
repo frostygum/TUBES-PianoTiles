@@ -1,29 +1,32 @@
 package com.pppb.tb02.view
 
 
+import android.util.Log
 import com.pppb.tb02.model.Piano
 import com.pppb.tb02.util.PianoGenerator
 import kotlin.random.Random
 
 class PianoThread(
     private val handler: PianoThreadHandler,
-    private val canvasSize: Pair<Int, Int>,
-    private var level: Int = 1
+    private val canvasSize: Pair<Int, Int>
 ): Runnable {
     private var thread: Thread = Thread(this)
+    private var piano: Piano = Piano()
     private var isRunning: Boolean = false
     private var isHasInitiated: Boolean = false
-    private var piano: Piano = Piano()
+    private var isBonusLevel: Boolean = false
+    private var level: Int = 1
 
     override fun run() {
         try {
             while(this.isRunning) {
                 Thread.sleep(10)
                 var hiddenFound = 0
+                var bonusNoteCount = 0
 
                 for(note in this.piano.notes) {
                     if(!note.isHidden) {
-                        if(!note.isClicked && note.bottom > this.canvasSize.second) {
+                        if(!note.isClicked && note.bottom > this.canvasSize.second && !isBonusLevel) {
                             note.lose()
                             this.lost()
                         }
@@ -42,16 +45,25 @@ class PianoThread(
                         }
                     }
                     else {
+                        if(note.isBonus) {
+                            bonusNoteCount++
+                        }
                         hiddenFound++
                     }
                 }
 
+                //If all note has been hidden (out of bottom frame)
                 if(hiddenFound == this.piano.notes.size) {
+                    val size = this.piano.notes.size
                     this.generateTiles()
+
+                    //If all bonus not has been hidden
+                    if(bonusNoteCount == size) {
+                        this.isBonusLevel = false
+                    }
                 }
 
                 this.handler.sendTilesLocation(this.piano)
-                this.handler.sendGameLevel(this.level)
             }
         } catch (e: InterruptedException) {
             e.printStackTrace()
@@ -65,8 +77,17 @@ class PianoThread(
     }
 
     private fun generateTiles() {
-        this.level++
-        this.piano = PianoGenerator.createPiano(25 + (this.level * 2), -500, Random.nextBoolean())
+        //Bonus level spawn every 5 level
+        if(!isBonusLevel && (this.level + 1) % 5 == 0) {
+            this.isBonusLevel = true
+            this.handler.sendGameLevel("BONUS")
+            this.piano = PianoGenerator.createPiano(30, -500, Random.nextBoolean(), true)
+        }
+        else {
+            this.level++
+            this.handler.sendGameLevel(this.level.toString())
+            this.piano = PianoGenerator.createPiano(25 + (this.level * 2), -500, Random.nextBoolean())
+        }
     }
 
     fun setLastPos(piano: Piano) {
@@ -74,8 +95,8 @@ class PianoThread(
         this.isHasInitiated = true
     }
 
-    fun setLastLevel(level: Int) {
-        this.level = level
+    fun setLastLevel(level: String) {
+        this.level = level.toInt()
     }
 
     fun start() {

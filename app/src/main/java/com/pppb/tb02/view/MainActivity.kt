@@ -2,6 +2,7 @@ package com.pppb.tb02.view
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -51,6 +52,11 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         this.changePage("GAME")
     }
 
+    override fun updateBonusLevelState(state: Boolean) {
+        Log.d("LEVEL", "BONUS")
+        this.pianoFragment.updateBonusLevelState(state)
+    }
+
     override fun updateUIScore(score: Int) {
         this.pianoFragment.updateUIScore(score)
     }
@@ -66,7 +72,7 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         this.timer.start()
     }
 
-    override fun setGameLevel(level: Int) {
+    override fun setGameLevel(level: String) {
         this.pianoFragment.updateGameLevel(level)
     }
 

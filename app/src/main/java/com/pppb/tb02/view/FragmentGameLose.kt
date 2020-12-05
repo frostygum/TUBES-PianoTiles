@@ -17,7 +17,7 @@ class FragmentGameLose: Fragment(R.layout.fragment_game_paused) {
     private lateinit var listener: IMainActivity
     private lateinit var presenter: IMainPresenter
     private var score: Int = 0
-    private var level: Int = 0
+    private var level: String = "1"
 
     companion object {
         fun newInstance(presenter: IMainPresenter): FragmentGameLose {
@@ -46,7 +46,7 @@ class FragmentGameLose: Fragment(R.layout.fragment_game_paused) {
         return this.binding.root
     }
 
-    fun setFinalLevel(level: Int) {
+    fun setFinalLevel(level: String) {
         this.level = level
     }
 

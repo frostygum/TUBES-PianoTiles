@@ -3,6 +3,7 @@ package com.pppb.tb02.view
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -51,19 +52,25 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         return this.binding.root
     }
 
+    fun updateBonusLevelState(state: Boolean) {
+        Log.d("LEVEL", "BONUS GOOD")
+//        if(state) {
+            this.binding.tvLevel.text = getText(R.string.bonus_level)
+//        }
+    }
+
     fun updateUIScore(score: Int) {
         this.binding.tvScore.text = score.toString()
     }
 
-    fun updateGameLevel(level: Int) {
-        this.binding.tvLevel.text = level.toString()
+    fun updateGameLevel(level: String) {
+        this.binding.tvLevel.text = level
     }
 
     private fun startThread(piano: Piano) {
         this.tilesThread = PianoThread(
             this.handler,
-            Pair(this.canvas.width, this.canvas.height),
-            1
+            Pair(this.canvas.width, this.canvas.height)
         )
 
         if(this.presenter.isThreadHasBlocked()) {
@@ -104,11 +111,15 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
                 if(i == 0 && !this.presenter.isThreadHasRunning()) {
                     fillPaint.color = Color.CYAN
                 }
-                if(note.isLoser) {
-                    fillPaint.color = Color.RED
+
+                if(note.isBonus) {
+                    fillPaint.color = Color.YELLOW
                 }
                 if(note.isClicked) {
                     fillPaint.color = Color.GRAY
+                }
+                if(note.isLoser) {
+                    fillPaint.color = Color.RED
                 }
 
                 if(note.tilePos >= 0) {

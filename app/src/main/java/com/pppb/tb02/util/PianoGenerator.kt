@@ -3,7 +3,7 @@ package com.pppb.tb02.util
 import com.pppb.tb02.model.Piano
 
 object PianoGenerator {
-    fun createPiano(size: Int, startPos: Int, alwaysHasNote: Boolean = false): Piano {
+    fun createPiano(size: Int, startPos: Int, alwaysHasNote: Boolean = false, isBonusLevel: Boolean = false): Piano {
         val piano = Piano()
         for(i in 0..size) {
             var startLoc = -1
@@ -22,7 +22,7 @@ object PianoGenerator {
 
             val tilePos = this.randomPos(startLoc, prevLoc)
 
-            piano.add(startPos, tilePos)
+            piano.add(startPos, tilePos, isBonusLevel)
         }
         return piano
     }
