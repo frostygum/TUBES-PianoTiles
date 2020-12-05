@@ -22,7 +22,7 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
     private val storage: ViewStorage = ViewStorage(this.application)
 
     init {
-        this.scoreList.addAll(this.storage.getFoodList())
+        this.scoreList.addAll(this.storage.getScoreList())
     }
 
     override fun isBonusLevel() = this.isBonusLevel
