@@ -17,7 +17,7 @@
     <string name="tv_score_title">High Score</string>
     <string name="tv_level_string">level :</string>
     <string name="tv_level_value">0</string>
-    <string name="tv_start">start</string>
+    <string name="tv_start">lose</string>
     <string name="tv_level">level</string>
     <string name="timer"> </string>
     <string name="bonus_level">BONUS</string>

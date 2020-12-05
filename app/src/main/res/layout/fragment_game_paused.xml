@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,6 +15,9 @@
         android:textSize="70sp"
         android:textAllCaps="true"
         android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
         />
     <TextView
         android:id="@+id/tv_timer"
@@ -24,7 +27,7 @@
         android:textColor="@color/bg_white"
         android:textSize="150sp"
         android:textStyle="bold"
-        android:layout_marginVertical="100dp"
+        android:layout_centerInParent="true"
         />
     <Button
         android:id="@+id/btn_start"
@@ -37,5 +40,8 @@
         android:layout_marginTop="30dp"
         android:paddingVertical="20dp"
         android:paddingHorizontal="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
         />
-</LinearLayout>
+</RelativeLayout>

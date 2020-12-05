@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.pppb.tb02.R
 import com.pppb.tb02.databinding.FragmentGameLoseBinding
 import com.pppb.tb02.presenter.IMainPresenter
-import com.pppb.tb02.presenter.MainPresenter
 import java.lang.ClassCastException
 
 class FragmentGameLose: Fragment(R.layout.fragment_game_paused) {
