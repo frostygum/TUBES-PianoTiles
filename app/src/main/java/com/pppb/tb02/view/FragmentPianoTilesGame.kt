@@ -42,7 +42,7 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         this.binding.ivCanvas.setOnTouchListener(this)
 
         this.binding.btnPause.setOnClickListener {
-            if(this.presenter.isThreadHasRunning()) {
+            if(this.presenter.isThreadHasRunning() && !this.presenter.isThreadHasBlocked()) {
                 this.tilesThread.block()
                 this.listener.changePage("PAUSE")
             }
