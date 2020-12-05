@@ -151,24 +151,26 @@ class MainActivity : AppCompatActivity(), IMainActivity, SensorEventListener {
 
         if(this.presenter.isBonusLevel()) {
             val v: Vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
+            //if sensor is accelerometer
             if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
                 this.accelerometerReading = event.values.clone()
                 val curTime = System.currentTimeMillis()
-                // only allow one update every 100ms.
+                // read sensor every 100ms.
                 if (curTime - lastUpdate > 100) {
                     val diffTime: Long = curTime - lastUpdate
                     lastUpdate = curTime
                     val x = event.values[0]
                     val y = event.values[1]
                     val z = event.values[2]
+                    //speed is count by delta movement / time (delta movement for every axis x, y, z)
                     val speed: Float = kotlin.math.abs(x + y + z - accelerometerReadingPrev[0] - accelerometerReadingPrev[1] - accelerometerReadingPrev[2]) / diffTime * 10000
+                    //if shake detect
                     if (speed > this.shakeThreshold) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                            v.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                         } else {
                             //deprecated in API 26
-                            v.vibrate(500);
+                            v.vibrate(200);
                         }
                         this.presenter.addScore(10)
                     }

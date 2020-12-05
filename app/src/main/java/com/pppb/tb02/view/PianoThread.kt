@@ -19,7 +19,7 @@ class PianoThread(
     override fun run() {
         try {
             while(this.isRunning) {
-                Thread.sleep(15)
+                Thread.sleep(16)
                 var hiddenFound = 0
                 var bonusNoteCount = 0
 
@@ -35,7 +35,7 @@ class PianoThread(
                         }
 
                         if(note.tilePos >= 0) {
-                            val newPos = calculateTilesMovement(note.top, 13)
+                            val newPos = calculateTilesMovement(note.top, 15)
                             note.top = newPos
                             note.bottom = newPos + note.length
                         }
