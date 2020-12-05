@@ -10,7 +10,6 @@ class PianoThreadHandler(private val presenter: IMainPresenter): Handler() {
     private val msgThreadBlocked = 1
     private val msgGameLevel = 2
     private val msgGameLost = 3
-    private val msgBonusLevel = 4
 
     override fun handleMessage(msg: Message) {
         when(msg.what) {
@@ -28,17 +27,7 @@ class PianoThreadHandler(private val presenter: IMainPresenter): Handler() {
             msgGameLost -> {
                 this.presenter.setGameLost()
             }
-            msgBonusLevel -> {
-                this.presenter.toggleBonusLevel()
-            }
         }
-    }
-
-    fun sendBonusLevel() {
-        val msg = Message()
-        msg.what = msgBonusLevel
-
-        this.sendMessage(msg)
     }
 
     fun sendGameLevel(level: String) {

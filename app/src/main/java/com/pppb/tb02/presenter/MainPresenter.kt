@@ -42,9 +42,8 @@ class MainPresenter(private val ui: IMainActivity, private val application: Appl
         this.isThreadHasRunning = state
     }
 
-    override fun toggleBonusLevel() {
-        this.isBonusLevel = !this.isBonusLevel
-        this.ui.updateBonusLevelState(this.isBonusLevel)
+    override fun setBonusLevel(state: Boolean) {
+        this.isBonusLevel = state
     }
 
     override fun threadIsBlocked(state: Boolean) {

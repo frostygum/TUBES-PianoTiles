@@ -1,7 +1,6 @@
 package com.pppb.tb02.view
 
 
-import android.util.Log
 import com.pppb.tb02.model.Piano
 import com.pppb.tb02.util.PianoGenerator
 import kotlin.random.Random
@@ -20,7 +19,7 @@ class PianoThread(
     override fun run() {
         try {
             while(this.isRunning) {
-                Thread.sleep(10)
+                Thread.sleep(15)
                 var hiddenFound = 0
                 var bonusNoteCount = 0
 
@@ -36,7 +35,7 @@ class PianoThread(
                         }
 
                         if(note.tilePos >= 0) {
-                            val newPos = calculateTilesMovement(note.top, 10)
+                            val newPos = calculateTilesMovement(note.top, 13)
                             note.top = newPos
                             note.bottom = newPos + note.length
                         }

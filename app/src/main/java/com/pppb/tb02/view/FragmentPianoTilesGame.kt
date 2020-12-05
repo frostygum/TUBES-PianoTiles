@@ -3,7 +3,6 @@ package com.pppb.tb02.view
 import android.content.Context
 import android.graphics.*
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -52,13 +51,6 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         return this.binding.root
     }
 
-    fun updateBonusLevelState(state: Boolean) {
-        Log.d("LEVEL", "BONUS GOOD")
-//        if(state) {
-            this.binding.tvLevel.text = getText(R.string.bonus_level)
-//        }
-    }
-
     fun updateUIScore(score: Int) {
         this.binding.tvScore.text = score.toString()
     }
@@ -101,12 +93,13 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
         val bin = this.binding.ivCanvas.width / 4
 
         for((i, note) in piano.notes.withIndex()) {
+            val top = note.top
+            val bottom = note.bottom
+            val left = bin * note.tilePos
+            val right = bin * (note.tilePos + 1)
+
             if(!note.isHidden) {
                 fillPaint.color = Color.BLACK
-                val top = note.top
-                val bottom = note.bottom
-                val left = bin * note.tilePos
-                val right = bin * (note.tilePos + 1)
 
                 if(i == 0 && !this.presenter.isThreadHasRunning()) {
                     fillPaint.color = Color.CYAN
@@ -128,8 +121,11 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
                 }
 
                 if(i == 0 && !this.presenter.isThreadHasRunning() && !note.isLoser) {
+                    fillPaint.color = Color.CYAN
+
                     val y = top + (kotlin.math.abs(top - bottom) / 2) + (textPaint.textSize / 2)
                     val x = left + (kotlin.math.abs(left - right) / 2) - textPaint.textSize
+
                     this.canvas.drawText("Start", x, y, textPaint)
                 }
             }
@@ -195,7 +191,7 @@ class FragmentPianoTilesGame: Fragment(R.layout.fragment_piano_tiles_game), View
                         }
                     }
                     else {
-                        if(!note.isHidden && !note.isClicked) {
+                        if(!note.isHidden && !note.isClicked && !note.isBonus) {
                             //hide node & add score to ui activity
                             note.clicked()
                             this.presenter.addScore(10)

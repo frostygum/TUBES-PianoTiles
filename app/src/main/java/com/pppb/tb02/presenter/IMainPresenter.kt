@@ -16,6 +16,6 @@ interface IMainPresenter {
     fun isThreadHasBlocked(): Boolean
     fun threadIsBlocked(state: Boolean)
     fun threadIsRunning(state: Boolean)
-    fun toggleBonusLevel()
+    fun setBonusLevel(state: Boolean)
     fun isBonusLevel(): Boolean
 }

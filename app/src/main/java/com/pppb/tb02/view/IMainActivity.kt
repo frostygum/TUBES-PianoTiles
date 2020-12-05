@@ -9,5 +9,4 @@ interface IMainActivity {
     fun updatePiano(piano: Piano)
     fun setGameLevel(level: String)
     fun setGameLost(scoreList: MutableList<Menu>)
-    fun updateBonusLevelState(state: Boolean)
 }

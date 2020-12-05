@@ -2,17 +2,15 @@ package com.pppb.tb02.view
 
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
-import androidx.appcompat.app.ActionBarDrawerToggle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.pppb.tb02.R
 import com.pppb.tb02.databinding.ActivityMainBinding
 import com.pppb.tb02.model.Menu
 import com.pppb.tb02.model.Piano
 import com.pppb.tb02.presenter.MainPresenter
-import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(), IMainActivity {
     private lateinit var binding: ActivityMainBinding
@@ -46,15 +44,15 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         this.pauseFragment = FragmentGamePause.newInstance(this.presenter)
         this.loseFragment = FragmentGameLose.newInstance(this.presenter)
         this.scoreFragment = FragmentScore.newInstance(this.presenter, this.adapter)
-        this.fragments = listOf(this.pianoFragment, this.pauseFragment, this.loseFragment, this.scoreFragment)
+        this.fragments = listOf(
+            this.pianoFragment,
+            this.pauseFragment,
+            this.loseFragment,
+            this.scoreFragment
+        )
 
         //Default start page
         this.changePage("GAME")
-    }
-
-    override fun updateBonusLevelState(state: Boolean) {
-        Log.d("LEVEL", "BONUS")
-        this.pianoFragment.updateBonusLevelState(state)
     }
 
     override fun updateUIScore(score: Int) {
@@ -73,6 +71,14 @@ class MainActivity : AppCompatActivity(), IMainActivity {
     }
 
     override fun setGameLevel(level: String) {
+        if(level != "BONUS") {
+            this.presenter.setBonusLevel(false)
+        }
+        else {
+            Toast.makeText(this, "Shake your phone to get bonus level scores !!", Toast.LENGTH_SHORT).show()
+            this.presenter.setBonusLevel(true)
+        }
+
         this.pianoFragment.updateGameLevel(level)
     }
 
@@ -121,7 +127,10 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         ft.commit()
     }
 
-    private inner class StartTimer(startTime: Long, interval: Long) : CountDownTimer(startTime, interval) {
+    private inner class StartTimer(startTime: Long, interval: Long) : CountDownTimer(
+        startTime,
+        interval
+    ) {
         override fun onFinish() {
             changePage("LOSE")
         }
