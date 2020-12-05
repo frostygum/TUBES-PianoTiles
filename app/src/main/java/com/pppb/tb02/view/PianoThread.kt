@@ -54,7 +54,7 @@ class PianoThread(
                 //If all note has been hidden (out of bottom frame)
                 if(hiddenFound == this.piano.notes.size) {
                     val size = this.piano.notes.size
-                    this.generateTiles()
+                    this.generatePiano()
 
                     //If all bonus not has been hidden
                     if(bonusNoteCount == size) {
@@ -75,7 +75,7 @@ class PianoThread(
         return rectStartPos + (movementLength * multiplier) + this.level
     }
 
-    private fun generateTiles() {
+    private fun generatePiano() {
         //Bonus level spawn every 5 level
         if(!isBonusLevel && (this.level + 1) % 5 == 0) {
             this.isBonusLevel = true
