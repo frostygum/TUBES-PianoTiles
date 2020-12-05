@@ -20,10 +20,10 @@ class ViewStorage(ctx: Context)  {
         this.sp.edit().putString(keyScoreList, scoreListStr).commit()
     }
 
-    fun getFoodList(): List<HighScore> {
-        val foodStr = this.sp.getString(keyScoreList, "")
+    fun getScoreList(): List<HighScore> {
+        val scoreStr = this.sp.getString(keyScoreList, "")
         val sType = object : TypeToken<List<HighScore>>() { }.type
 
-        return Gson().fromJson(foodStr, sType) ?: listOf()
+        return Gson().fromJson(scoreStr, sType) ?: listOf()
     }
 }
